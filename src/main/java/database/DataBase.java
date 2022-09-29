@@ -9,41 +9,130 @@ public class DataBase {
     private final static String databaseUrl = "jdbc:sqlite:./obra-social.db";
 
     public void createDatabaseIfDoesNotExists() {
-        try (Connection connection = DriverManager.getConnection(databaseUrl)) {
+        try (Connection connection = getConnection()) {
             String sqlCreateDataBase = readFile("src/main/java/database/obra-social.sql");
             executeUpdate(connection, sqlCreateDataBase);
         } catch (SQLException e) {
             //database already exists, no actions needed
-            System.out.println(e.getMessage());
-            clearDataBase();
         } catch (IOException e){
             e.printStackTrace();
         }
 
-        try (Connection connection = DriverManager.getConnection(databaseUrl)) {
-            executeUpdate(connection, "insert into clientes values (\"Marten\", \"Juan\", \"DNI\", 41686955, 20416869554, \"28/01/1999\", \"pro\", \"yo\", \"29/09/2022\", \"jmm@gmail.com\", \"1234\")");
-            printResultSet(executeQuery(connection, "select * from clientes"));
+        clearDataBase();
+        testInsertar();
+    }
 
-            executeUpdate(connection, "insert into empleados values (\"Marten\", \"Juan\", \"DNI\", 41686955, 4561234, \"mjj@gmail.com\", \"random\", \"jjj\", \"4321\")");
-            printResultSet(executeQuery(connection, "select * from empleados"));
+    private void testInsertar() {
+        insertarPlan("nefasto", 999.99, "ninguno");
+        insertarPlan("basico", 9999.99, "un par");
+        insertarPlan("pro", 99999.99, "algunos");
+        insertarCliente("Perez", "Juan", "DNI", 44555666,
+                "20445556660", "15/04/1997", null, "titular",
+                "29/09/2022", "jp@gmail.com", "1234");
+        insertarCliente("Garcia", "Carlos", "DNI", 45666777,
+                "2045666777", "16/10/1999", "basico", "hijo",
+                "28/09/2022", "cg@gmail.com", "2345");
+        insertarCliente("Fernandez", "Diego", "DNI", 46777888,
+                "20467778880", "22/06/1995", "pro", "titular",
+                "27/09/2022", "df@gmail.com", "3456");
+        insertarEmpleado("Sanchez", "Martin", "DNI", 47888999,
+                "4561234", "ms@gmail.com", "presidente", "ms4567", "4567");
+        insertarEmpleado("Alvarado", "Nicolas", "DNI", 48999000,
+                "4564321", "na@gmail.com", "tecnico", "na5678", "5678");
+        insertarSolicitudAlta("pro", 44555666, "29/09/2022");
+        insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
+        insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
 
-            executeUpdate(connection, "insert into planes values (\"pro\", 999.99, \"ninguno\")");
+        imprimirBaseDeDatos();
+    }
+
+    private static void imprimirBaseDeDatos() {
+        try (Connection connection = getConnection()) {
+            System.out.println("\nPlanes:");
             printResultSet(executeQuery(connection, "select * from planes"));
-
-            executeUpdate(connection, "insert into solicitudes_alta (tipo_plan, cliente, fecha) values (\"pro\", 41686955, \"29/09/2022\")");
+            System.out.println("\nClientes:");
+            printResultSet(executeQuery(connection, "select * from clientes"));
+            System.out.println("\nEmpleados:");
+            printResultSet(executeQuery(connection, "select * from empleados"));
+            System.out.println("\nSolicitudes de alta:");
             printResultSet(executeQuery(connection, "select * from solicitudes_alta"));
-
-            executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
+            System.out.println("\nSolicitudes de reintegro:");
             printResultSet(executeQuery(connection, "select * from solicitudes_reintegro"));
-
-            executeUpdate(connection, "insert into solicitudes_prestaciones (cliente, fecha, razon, practica) values (41686955, \"30/09/2022\", \"pinto\", \"otra\")");
+            System.out.println("\nSolicitudes de prestaciones:");
             printResultSet(executeQuery(connection, "select * from solicitudes_prestaciones"));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static void clearDataBase(){
+    public void insertarPlan(String nombre, double costo, String beneficios){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection,
+                    "insert into planes values (\"" + nombre + "\", " +
+                    costo + ", \"" + beneficios + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertarCliente(String apellido, String nombre, String tipo_documento, int nro_documento, String cuil, String fecha_nacimiento, String plan, String parentesco, String fecha_alta_plan, String email, String contraseña){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection,
+                    "insert into clientes values (\"" + apellido + "\", \"" + nombre + "\", \"" +
+                            tipo_documento + "\", " + nro_documento + ", \"" + cuil + "\", \"" + fecha_nacimiento +
+                            "\", " + (plan == null ? "null" : "\"" + plan + "\"") + ", \"" + parentesco + "\", \"" + fecha_alta_plan + "\", \"" +
+                            email + "\", \"" + contraseña + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertarEmpleado(String apellido, String nombre, String tipo_documento, int nro_documento, String telefono, String email, String cargo, String usuario, String contraseña){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "insert into empleados values (\"" + apellido + "\", \"" + nombre +
+                    "\", \"" + tipo_documento + "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
+                    "\", \"" + cargo + "\", \"" + usuario + "\", \"" + contraseña + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertarSolicitudAlta(String plan, int dni_cliente, String fechaSolicitud){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "insert into solicitudes_alta (tipo_plan, cliente, fecha) values" +
+                    "(\"" + plan + "\", " + dni_cliente + ", \"" + fechaSolicitud + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String razon, String practica){
+        //executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values ("
+                    + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String razon, String practica){
+        //executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "insert into solicitudes_prestaciones (cliente, fecha, razon, practica) values ("
+                    + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static Connection getConnection() throws SQLException {
+        Connection connection = DriverManager.getConnection(databaseUrl);
+        connection.createStatement().execute("PRAGMA foreign_keys = ON");
+        return connection;
+    }
+
+    public void clearDataBase(){
         try (Connection connection = DriverManager.getConnection(databaseUrl)){
             executeUpdate(connection, "DELETE FROM Clientes" );
             executeUpdate(connection, "DELETE FROM Empleados" );
@@ -69,7 +158,7 @@ public class DataBase {
         }
     }
 
-    private String readFile(String sourceFile) throws IOException {
+    private static String readFile(String sourceFile) throws IOException {
         return Files.readString(Paths.get(sourceFile));
     }
 
