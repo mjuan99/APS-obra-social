@@ -26,20 +26,22 @@ public class DataBase {
         insertarPlan("nefasto", 999.99, "ninguno");
         insertarPlan("basico", 9999.99, "un par");
         insertarPlan("pro", 99999.99, "algunos");
-        insertarCliente("Perez", "Juan", "DNI", 44555666,
-                "20445556660", "15/04/1997", null, "titular",
+        insertarCliente("Perez", "Juan", 44555666,
+                "20445556660", "15/04/1997", null, true,
                 "29/09/2022", "jp@gmail.com", "1234");
-        insertarCliente("Garcia", "Carlos", "DNI", 45666777,
-                "2045666777", "16/10/1999", "basico", "hijo",
+        insertarCliente("Garcia", "Carlos", 45666777,
+                "2045666777", "16/10/1999", "basico", false,
                 "28/09/2022", "cg@gmail.com", "2345");
-        insertarCliente("Fernandez", "Diego", "DNI", 46777888,
-                "20467778880", "22/06/1995", "pro", "titular",
+        insertarCliente("Fernandez", "Diego", 46777888,
+                "20467778880", "22/06/1995", "pro", true,
                 "27/09/2022", "df@gmail.com", "3456");
-        insertarEmpleado("Sanchez", "Martin", "DNI", 47888999,
+        insertarFamiliar(44555666, 45666777, "hermano");
+        insertarEmpleado("Sanchez", "Martin", 47888999,
                 "4561234", "ms@gmail.com", "presidente", "ms4567", "4567");
-        insertarEmpleado("Alvarado", "Nicolas", "DNI", 48999000,
+        insertarEmpleado("Alvarado", "Nicolas", 48999000,
                 "4564321", "na@gmail.com", "tecnico", "na5678", "5678");
         insertarSolicitudAlta("pro", 44555666, "29/09/2022");
+        insertarSolicitudAlta("nefasto", 45666777, "30/09/2022");
         insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
         insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
 
@@ -52,6 +54,8 @@ public class DataBase {
             printResultSet(executeQuery(connection, "select * from planes"));
             System.out.println("\nClientes:");
             printResultSet(executeQuery(connection, "select * from clientes"));
+            System.out.println("\nFamiliares:");
+            printResultSet(executeQuery(connection, "select * from familiares"));
             System.out.println("\nEmpleados:");
             printResultSet(executeQuery(connection, "select * from empleados"));
             System.out.println("\nSolicitudes de alta:");
@@ -75,22 +79,31 @@ public class DataBase {
         }
     }
 
-    public void insertarCliente(String apellido, String nombre, String tipo_documento, int nro_documento, String cuil, String fecha_nacimiento, String plan, String parentesco, String fecha_alta_plan, String email, String contraseña){
+    public void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contraseña){
         try(Connection connection = getConnection()){
             executeUpdate(connection,
-                    "insert into clientes values (\"" + apellido + "\", \"" + nombre + "\", \"" +
-                            tipo_documento + "\", " + nro_documento + ", \"" + cuil + "\", \"" + fecha_nacimiento +
-                            "\", " + (plan == null ? "null" : "\"" + plan + "\"") + ", \"" + parentesco + "\", \"" + fecha_alta_plan + "\", \"" +
-                            email + "\", \"" + contraseña + "\")");
+                    "insert into clientes values (\"" + apellido + "\", \"" + nombre + "\", " +
+                            nro_documento + ", \"" + cuil + "\", \"" + fecha_nacimiento +
+                            "\", " + (plan == null ? "null" : "\"" + plan + "\"") + ", " + (esTitular ? 1 : 0) +
+                            ", \"" + fecha_alta_plan + "\", \"" + email + "\", \"" + contraseña + "\")");
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
     }
 
-    public void insertarEmpleado(String apellido, String nombre, String tipo_documento, int nro_documento, String telefono, String email, String cargo, String usuario, String contraseña){
+    public void insertarFamiliar(int dni_titular, int dni_familiar, String parentesco){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection,
+                    "insert into familiares values (" + dni_titular + ", " + dni_familiar + ", \"" + parentesco + "\")");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contraseña){
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into empleados values (\"" + apellido + "\", \"" + nombre +
-                    "\", \"" + tipo_documento + "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
+                    "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
                     "\", \"" + cargo + "\", \"" + usuario + "\", \"" + contraseña + "\")");
         }catch (SQLException e){
             System.out.println(e.getMessage());
@@ -135,6 +148,7 @@ public class DataBase {
     public void clearDataBase(){
         try (Connection connection = DriverManager.getConnection(databaseUrl)){
             executeUpdate(connection, "DELETE FROM Clientes" );
+            executeUpdate(connection, "DELETE FROM Familiares" );
             executeUpdate(connection, "DELETE FROM Empleados" );
             executeUpdate(connection, "DELETE FROM Planes" );
             executeUpdate(connection, "DELETE FROM Solicitudes_Alta" );
