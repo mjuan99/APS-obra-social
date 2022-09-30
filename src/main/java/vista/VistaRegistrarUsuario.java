@@ -13,6 +13,11 @@ public class VistaRegistrarUsuario {
     private JButton botonRegistrar;
     private JTextField mailTextField;
     private JPasswordField contraseniaTextField;
+    private JTextField fechaNacTextField;
+    private JTextField planTextField;
+    private JRadioButton siRadioButton;
+    private JRadioButton noRadioButton;
+    private JTextField fechaAltaPlanTextField;
     private DataBase db;
     private VistaPrincipal vistaPrincipal;
 
@@ -21,7 +26,7 @@ public class VistaRegistrarUsuario {
         this.db = db;
         this.mostrarVista();
         this.inicializar();
-        this.inicializarListeners();
+        this.iniciarBotonRegistrarListener();
     }
 
     public void mostrarVista() {
@@ -35,29 +40,45 @@ public class VistaRegistrarUsuario {
 
     private void inicializar() {
 //        botonRegistrar.setEnabled(false);
+        this.inicializarGrupoRadioButtons();
     }
 
-    public void inicializarListeners() {
+    public void iniciarBotonRegistrarListener() {
+        //todo preguntar a la otra comision por los campos que no se piden
         botonRegistrar.addActionListener(actionEvent -> {
             if (todosLosCamposEstanLlenos()) {
                 String nombre = this.nombreTextField.getText();
                 String apellido = this.apellidoTextField.getText();
                 //todo hay que validar que el nro_documento sea un entero?
-//                int nro_documento = Integer.parseInt(this.dniTextField.getText());
+                int nro_documento = Integer.parseInt(this.dniTextField.getText());
+                String fecha_nac = this.fechaNacTextField.getText();
+                String plan = this.planTextField.getText();
+                boolean esTitular;
+                if (this.siRadioButton.isSelected())
+                    esTitular = true;
+                else
+                    esTitular = false;
+                String fechaAltaPlan = this.fechaAltaPlanTextField.getText();
                 String cuil = this.cuilTextField.getText();
                 String contrasenia = this.contraseniaTextField.getText();
                 String mail = this.mailTextField.getText();
-                //todo preguntar a la otra comision por los campos que no se piden
-//                this.db.insertarCliente(apellido, nombre, nro_documento, cuil, null, null, null, null, mail, contrasenia);
 
-
+                this.db.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, plan, esTitular, fechaAltaPlan, mail, contrasenia);
                 vistaPrincipal.activarBotonDeRegistrarUsuario();
             }
         });
     }
 
+    private void inicializarGrupoRadioButtons() {
+        ButtonGroup radioButtonsGroup = new ButtonGroup();
+        radioButtonsGroup.add(siRadioButton);
+        radioButtonsGroup.add(noRadioButton);
+    }
+
     private boolean todosLosCamposEstanLlenos() {
-        return !this.nombreTextField.equals("") && !this.contraseniaTextField.getText().equals("");
+        //todo terminar esto
+        return !this.nombreTextField.equals("") &&
+                !this.contraseniaTextField.getText().equals("");
     }
 
 }
