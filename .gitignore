@@ -3,6 +3,8 @@ gradlew
 gradlew.bat
 *.idea
 gradle
+build
+obra-social.db
 
 # Compiled class file
 *.class

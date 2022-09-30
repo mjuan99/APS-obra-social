@@ -6,7 +6,9 @@ import java.nio.file.Paths;
 import java.sql.*;
 
 public class DataBase {
+
     private final static String databaseUrl = "jdbc:sqlite:./obra-social.db";
+
 
     public void createDatabaseIfDoesNotExists() {
         try (Connection connection = getConnection()) {
@@ -79,13 +81,13 @@ public class DataBase {
         }
     }
 
-    public void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contraseña){
+    public void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contrasenia){
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into clientes values (\"" + apellido + "\", \"" + nombre + "\", " +
                             nro_documento + ", \"" + cuil + "\", \"" + fecha_nacimiento +
                             "\", " + (plan == null ? "null" : "\"" + plan + "\"") + ", " + (esTitular ? 1 : 0) +
-                            ", \"" + fecha_alta_plan + "\", \"" + email + "\", \"" + contraseña + "\")");
+                            ", \"" + fecha_alta_plan + "\", \"" + email + "\", \"" + contrasenia + "\")");
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
@@ -100,11 +102,11 @@ public class DataBase {
         }
     }
 
-    public void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contraseña){
+    public void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contrasenia){
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into empleados values (\"" + apellido + "\", \"" + nombre +
                     "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
-                    "\", \"" + cargo + "\", \"" + usuario + "\", \"" + contraseña + "\")");
+                    "\", \"" + cargo + "\", \"" + usuario + "\", \"" + contrasenia + "\")");
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
