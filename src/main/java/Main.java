@@ -7,6 +7,7 @@ public class Main {
       DataBase db = new DataBase();
       db.createDatabaseIfDoesNotExists();
       VistaPrincipal vistaPrincipal = new VistaPrincipal(db);
+      //vistaPrincipal.mostrarVista();
     }
 
 }
