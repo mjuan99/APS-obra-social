@@ -3,6 +3,8 @@ package vista;
 import database.DataBase;
 import javax.swing.*;
 
+import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
+
 public class VistaRegistrarUsuario {
 
     private JPanel contentPane;
@@ -19,10 +21,10 @@ public class VistaRegistrarUsuario {
     private JRadioButton noRadioButton;
     private JTextField fechaAltaPlanTextField;
     private DataBase db;
-    private VistaPrincipal vistaPrincipal;
+    private VistaLogin vistaLogin;
 
-    public VistaRegistrarUsuario(VistaPrincipal vistaPrincipal, DataBase db) {
-        this.vistaPrincipal = vistaPrincipal;
+    public VistaRegistrarUsuario(VistaLogin vistaLogin, DataBase db) {
+        this.vistaLogin = vistaLogin;
         this.db = db;
         this.mostrarVista();
         this.inicializar();
@@ -36,10 +38,10 @@ public class VistaRegistrarUsuario {
         frame.pack();
         frame.setVisible(true);
 //        frame.setResizable(false);
+        frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
     private void inicializar() {
-//        botonRegistrar.setEnabled(false);
         this.inicializarGrupoRadioButtons();
     }
 
@@ -64,7 +66,7 @@ public class VistaRegistrarUsuario {
                 String mail = this.mailTextField.getText();
 
                 this.db.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, plan, esTitular, fechaAltaPlan, mail, contrasenia);
-                vistaPrincipal.activarBotonDeRegistrarUsuario();
+                vistaLogin.activarBotonDeRegistrarUsuario();
             }
         });
     }

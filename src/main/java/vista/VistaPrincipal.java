@@ -10,7 +10,6 @@ public class VistaPrincipal {
 
     private JPanel contentPane;
     private DataBase database;
-    private JButton botonRegistrarUsuario;
     private JButton botonIniciarSesion;
 
     public VistaPrincipal(DataBase dataBase) {
@@ -31,17 +30,8 @@ public class VistaPrincipal {
     }
 
     private void inicializarListeners() {
-        this.botonRegistrarUsuario.addActionListener(actionEvent -> {
-            VistaRegistrarUsuario vistaRegistrarUsuario = new VistaRegistrarUsuario(this, this.database);
-            this.botonRegistrarUsuario.setEnabled(false);
-        });
         this.botonIniciarSesion.addActionListener(actionEvent -> {
             VistaLogin vistaLogin = new VistaLogin(this, this.database);
-            this.botonRegistrarUsuario.setEnabled(false);
         });
-    }
-
-    public void activarBotonDeRegistrarUsuario() {
-        this.botonRegistrarUsuario.setEnabled(true);
     }
 }
