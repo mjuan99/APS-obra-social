@@ -9,7 +9,7 @@ public class VistaLogin extends JFrame{
     private JPanel contentPane;
     private JTextField nombreUsuariotextField;
     private JPasswordField passwordField;
-    private JButton botonIniciarSesion;
+    private JButton iniciarSesionButton;
     private DataBase db;
     private VistaPrincipal vistaPrincipal;
     private JFrame frame;
@@ -28,7 +28,6 @@ public class VistaLogin extends JFrame{
         frame.setResizable(false);
         frame.pack();
         frame.setVisible(true);
-        //frame.setSize(550,400);
         frame.setLocationRelativeTo(null);
     }
 }
