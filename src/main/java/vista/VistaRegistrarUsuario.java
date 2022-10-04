@@ -37,7 +37,8 @@ public class VistaRegistrarUsuario {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-//        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
