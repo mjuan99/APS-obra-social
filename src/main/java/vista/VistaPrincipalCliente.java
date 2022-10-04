@@ -4,6 +4,8 @@ import database.DataBase;
 import database.entidades.Plan;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,6 +31,7 @@ public class VistaPrincipalCliente extends JFrame {
         JTable tablaPlanes = new JTable();
         tablaPlanes.setEnabled(false);
         this.mostrarVista();
+//        this.botonSolicitarPlan.setEnabled(false);
         mostrarPlanes();
         inicializarListeners();
     }
@@ -37,12 +40,16 @@ public class VistaPrincipalCliente extends JFrame {
         botonSolicitarPlan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                int fila = tablaPlanes.getSelectedRow();
-                String nombrePlan = (String) tablaPlanes.getValueAt(fila,0);
-                //DataBase.seleccionarPlanCliente(dniCliente,nombrePlan,);
-                DataBase.insertarSolicitudAlta(nombrePlan,dniCliente,getDate());
-                DataBase.imprimirBaseDeDatos();
+                try {
+                    int fila = tablaPlanes.getSelectedRow();
+                    String nombrePlan = (String) tablaPlanes.getValueAt(fila, 0);
+                    DataBase.insertarSolicitudAlta(nombrePlan, dniCliente, getDate());
+                    JOptionPane.showMessageDialog(null, "Alta solicitada exitosamente", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
+                    DataBase.imprimirBaseDeDatos();
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Debes seleccionar un plan",
+                            "No seleccionaste un plan", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
     }

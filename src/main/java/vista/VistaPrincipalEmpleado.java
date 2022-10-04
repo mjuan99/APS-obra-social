@@ -36,13 +36,18 @@ public class VistaPrincipalEmpleado extends JFrame {
         botonSolicitarPlan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int fila = tablaPlanes.getSelectedRow();
-                String nombrePlan = (String) tablaPlanes.getValueAt(fila,0);
-                int dniCliente = Integer.parseInt((String) tablaPlanes.getValueAt(fila,1));
-                DataBase.seleccionarPlanCliente(dniCliente,nombrePlan,getDate());
-                DataBase.eliminarSolicitudDeAlta(nombrePlan,dniCliente);
-                DataBase.imprimirBaseDeDatos();
-                mostrarPlanes();
+                try {
+                    int fila = tablaPlanes.getSelectedRow();
+                    String nombrePlan = (String) tablaPlanes.getValueAt(fila, 0);
+                    int dniCliente = Integer.parseInt((String) tablaPlanes.getValueAt(fila, 1));
+                    DataBase.seleccionarPlanCliente(dniCliente, nombrePlan, getDate());
+                    DataBase.eliminarSolicitudDeAlta(nombrePlan, dniCliente);
+                    DataBase.imprimirBaseDeDatos();
+                    mostrarPlanes();
+                    JOptionPane.showMessageDialog(null, "Solicitud aceptada correctamente", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Debes seleccionar una solicitud", "No seleccionaste un solicitud", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
     }
