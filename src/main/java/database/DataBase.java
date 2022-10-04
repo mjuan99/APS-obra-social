@@ -140,6 +140,28 @@ public class DataBase {
         }
     }
 
+    public boolean loginCliente(int dni_cliente, String contrasenia){
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Clientes WHERE nro_documento = " + dni_cliente +
+                    " AND contraseña = \"" + contrasenia + "\";");
+            return rs.next();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loginEmpleado(String usuario, String contrasenia){
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Empleados WHERE usuario = \"" + usuario +
+                    "\" AND contraseña = \"" + contrasenia + "\";");
+            return rs.next();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
     private static Connection getConnection() throws SQLException {
         Connection connection = DriverManager.getConnection(databaseUrl);
         connection.createStatement().execute("PRAGMA foreign_keys = ON");
