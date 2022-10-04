@@ -22,6 +22,7 @@ public class DataBase {
 
         clearDataBase();
         testInsertar();
+        imprimirBaseDeDatos();
     }
 
     private void testInsertar() {
@@ -46,8 +47,6 @@ public class DataBase {
         insertarSolicitudAlta("nefasto", 45666777, "30/09/2022");
         insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
         insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
-
-        imprimirBaseDeDatos();
     }
 
     private static void imprimirBaseDeDatos() {
