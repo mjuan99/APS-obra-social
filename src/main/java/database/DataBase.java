@@ -1,9 +1,12 @@
 package database;
 
+import database.entidades.Plan;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.LinkedList;
 
 public class DataBase {
 
@@ -69,6 +72,18 @@ public class DataBase {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static LinkedList<Plan> getPlanes(){
+        LinkedList<Plan> planes = new LinkedList<>();
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "select * from planes");
+            while (rs.next())
+                planes.add(new Plan(rs.getString("nombre"), rs.getDouble("costo"), rs.getString("beneficios")));
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return planes;
     }
 
     public static void insertarPlan(String nombre, double costo, String beneficios){
