@@ -23,14 +23,9 @@ public class DataBase {
         } catch (IOException e){
             e.printStackTrace();
         }
-
-        //TODO sacar esto cuando no se necesite
-        clearDataBase();
-        testInsertar();
-        imprimirBaseDeDatos();
     }
 
-    private static void testInsertar() {
+    public static void testInsertar() {
         insertarPlan("nefasto", 999.99, "ninguno");
         insertarPlan("basico", 9999.99, "un par");
         insertarPlan("pro", 99999.99, "algunos");
@@ -54,7 +49,7 @@ public class DataBase {
         insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
     }
 
-    private static void imprimirBaseDeDatos() {
+    public static void imprimirBaseDeDatos() {
         try (Connection connection = getConnection()) {
             System.out.println("\nPlanes:");
             printResultSet(executeQuery(connection, "select * from planes"));
