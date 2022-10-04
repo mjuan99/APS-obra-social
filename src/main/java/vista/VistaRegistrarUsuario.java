@@ -44,7 +44,6 @@ public class VistaRegistrarUsuario {
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 vistaPrincipal.activarBotonDeRegistrarUsuario();
-                System.exit(0);
             }
         });
     }
