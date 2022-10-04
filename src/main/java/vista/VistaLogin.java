@@ -10,28 +10,29 @@ public class VistaLogin extends JFrame{
     private JTextField nombreUsuariotextField;
     private JPasswordField passwordField;
     private JButton botonIniciarSesion;
-    private DataBase dataBase;
+    private JButton botonRegistrar;
     private VistaPrincipal vistaPrincipal;
     private JFrame frame;
 
 
-    public VistaLogin(VistaPrincipal vistaPrincipal, DataBase database) {
+    public VistaLogin(VistaPrincipal vistaPrincipal) {
         this.frame = new JFrame("Login");
         this.vistaPrincipal = vistaPrincipal;
-        this.dataBase = new DataBase();
         this.mostrarVista();
         this.inicializarListeners();
     }
 
     private void inicializarListeners() {
         this.botonIniciarSesion.addActionListener(actionEvent -> {
+            //TODO: Crear metodo en bd para poder consultar por los usuarios existentes.
+            // luego verificar que el nombre de usuario exista, luego que coincida la contraseña
             String nombreUsuario = this.nombreUsuariotextField.getText();
             String pwUsuario = String.valueOf(this.passwordField.getPassword());
             try {
-                if (dataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
-                    VistaPrincipalEmpleado vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
-                } else if (dataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
-                    VistaPrincipalCliente vistaPrincipalCliente = new VistaPrincipalCliente(this);
+                if (DataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
+                    System.out.println("Se logeo empleado");
+                } else if (DataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
+                    System.out.println("Se logeo cliente");
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
                             "Error", JOptionPane.ERROR_MESSAGE);

@@ -1,18 +1,14 @@
 package vista;
 
-import database.DataBase;
-
 import javax.swing.*;
 
 public class VistaPrincipal {
 
     private JPanel contentPane;
-    private DataBase database;
     private JButton botonIniciarSesion;
     private JButton botonRegistrar;
 
-    public VistaPrincipal(DataBase dataBase) {
-        this.database = database;
+    public VistaPrincipal() {
         this.mostrarVista();
         this.inicializarListeners();
     }
@@ -30,11 +26,11 @@ public class VistaPrincipal {
 
     private void inicializarListeners() {
         this.botonRegistrar.addActionListener(actionEvent -> {
-            VistaRegistrarUsuario vistaRegistrarUsuario = new VistaRegistrarUsuario(this, this.database);
+            VistaRegistrarUsuario vistaRegistrarUsuario = new VistaRegistrarUsuario(this);
             this.botonRegistrar.setEnabled(false);
         });
         this.botonIniciarSesion.addActionListener(actionEvent -> {
-            VistaLogin vistaLogin = new VistaLogin(this, this.database);
+            VistaLogin vistaLogin = new VistaLogin(this);
         });
     }
 
