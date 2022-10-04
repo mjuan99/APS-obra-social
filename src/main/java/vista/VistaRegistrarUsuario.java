@@ -16,16 +16,12 @@ public class VistaRegistrarUsuario {
     private JTextField mailTextField;
     private JPasswordField contraseniaTextField;
     private JTextField fechaNacTextField;
-    private JTextField planTextField;
     private JRadioButton siRadioButton;
     private JRadioButton noRadioButton;
-    private JTextField fechaAltaPlanTextField;
-    private DataBase db;
     private VistaPrincipal vistaPrincipal;
 
-    public VistaRegistrarUsuario(VistaPrincipal vistaPrincipal, DataBase db) {
+    public VistaRegistrarUsuario(VistaPrincipal vistaPrincipal) {
         this.vistaPrincipal = vistaPrincipal;
-        this.db = db;
         this.mostrarVista();
         this.inicializar();
         this.iniciarBotonRegistrarListener();
@@ -55,18 +51,16 @@ public class VistaRegistrarUsuario {
                 //todo hay que validar que el nro_documento sea un entero?
                 int nro_documento = Integer.parseInt(this.dniTextField.getText());
                 String fecha_nac = this.fechaNacTextField.getText();
-                String plan = this.planTextField.getText();
                 boolean esTitular;
                 if (this.siRadioButton.isSelected())
                     esTitular = true;
                 else
                     esTitular = false;
-                String fechaAltaPlan = this.fechaAltaPlanTextField.getText();
                 String cuil = this.cuilTextField.getText();
-                String contrasenia = this.contraseniaTextField.getText();
+                String contrasenia = String.valueOf(this.contraseniaTextField.getPassword());
                 String mail = this.mailTextField.getText();
 
-                this.db.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, plan, esTitular, fechaAltaPlan, mail, contrasenia);
+                DataBase.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, null, esTitular, "", mail, contrasenia);
                 vistaPrincipal.activarBotonDeRegistrarUsuario();
             }
         });

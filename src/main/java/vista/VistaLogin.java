@@ -11,15 +11,13 @@ public class VistaLogin extends JFrame{
     private JPasswordField passwordField;
     private JButton botonIniciarSesion;
     private JButton botonRegistrar;
-    private DataBase dataBase;
     private VistaPrincipal vistaPrincipal;
     private JFrame frame;
 
 
-    public VistaLogin(VistaPrincipal vistaPrincipal, DataBase database) {
+    public VistaLogin(VistaPrincipal vistaPrincipal) {
         this.frame = new JFrame("Login");
         this.vistaPrincipal = vistaPrincipal;
-        this.dataBase = new DataBase();
         this.mostrarVista();
         this.inicializarListeners();
     }
@@ -31,9 +29,9 @@ public class VistaLogin extends JFrame{
             String nombreUsuario = this.nombreUsuariotextField.getText();
             String pwUsuario = String.valueOf(this.passwordField.getPassword());
             try {
-                if (dataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
+                if (DataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
                     System.out.println("Se logeo empleado");
-                } else if (dataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
+                } else if (DataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
                     System.out.println("Se logeo cliente");
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",

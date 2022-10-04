@@ -10,7 +10,7 @@ public class DataBase {
     private final static String databaseUrl = "jdbc:sqlite:./obra-social.db";
 
 
-    public void createDatabaseIfDoesNotExists() {
+    public static void createDatabaseIfDoesNotExists() {
         try (Connection connection = getConnection()) {
             String sqlCreateDataBase = readFile("src/main/java/database/obra-social.sql");
             executeUpdate(connection, sqlCreateDataBase);
@@ -25,7 +25,7 @@ public class DataBase {
         imprimirBaseDeDatos();
     }
 
-    private void testInsertar() {
+    private static void testInsertar() {
         insertarPlan("nefasto", 999.99, "ninguno");
         insertarPlan("basico", 9999.99, "un par");
         insertarPlan("pro", 99999.99, "algunos");
@@ -70,7 +70,7 @@ public class DataBase {
         }
     }
 
-    public void insertarPlan(String nombre, double costo, String beneficios){
+    public static void insertarPlan(String nombre, double costo, String beneficios){
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into planes values (\"" + nombre + "\", " +
@@ -80,7 +80,7 @@ public class DataBase {
         }
     }
 
-    public void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contrasenia){
+    public static void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contrasenia){
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into clientes values (\"" + apellido + "\", \"" + nombre + "\", " +
@@ -92,7 +92,7 @@ public class DataBase {
         }
     }
 
-    public void insertarFamiliar(int dni_titular, int dni_familiar, String parentesco){
+    public static void insertarFamiliar(int dni_titular, int dni_familiar, String parentesco){
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into familiares values (" + dni_titular + ", " + dni_familiar + ", \"" + parentesco + "\")");
@@ -101,7 +101,7 @@ public class DataBase {
         }
     }
 
-    public void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contrasenia){
+    public static void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contrasenia){
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into empleados values (\"" + apellido + "\", \"" + nombre +
                     "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
@@ -111,7 +111,7 @@ public class DataBase {
         }
     }
 
-    public void insertarSolicitudAlta(String plan, int dni_cliente, String fechaSolicitud){
+    public static void insertarSolicitudAlta(String plan, int dni_cliente, String fechaSolicitud){
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into solicitudes_alta (tipo_plan, cliente, fecha) values" +
                     "(\"" + plan + "\", " + dni_cliente + ", \"" + fechaSolicitud + "\")");
@@ -120,7 +120,7 @@ public class DataBase {
         }
     }
 
-    public void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String razon, String practica){
+    public static void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String razon, String practica){
         //executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values ("
@@ -130,7 +130,7 @@ public class DataBase {
         }
     }
 
-    public void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String razon, String practica){
+    public static void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String razon, String practica){
         //executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into solicitudes_prestaciones (cliente, fecha, razon, practica) values ("
@@ -140,7 +140,7 @@ public class DataBase {
         }
     }
 
-    public boolean loginCliente(int dni_cliente, String contrasenia){
+    public static boolean loginCliente(int dni_cliente, String contrasenia){
         try(Connection connection = getConnection()){
             ResultSet rs = executeQuery(connection, "SELECT * FROM Clientes WHERE nro_documento = " + dni_cliente +
                     " AND contraseña = \"" + contrasenia + "\";");
@@ -151,7 +151,7 @@ public class DataBase {
         }
     }
 
-    public boolean loginEmpleado(String usuario, String contrasenia){
+    public static boolean loginEmpleado(String usuario, String contrasenia){
         try(Connection connection = getConnection()){
             ResultSet rs = executeQuery(connection, "SELECT * FROM Empleados WHERE usuario = \"" + usuario +
                     "\" AND contraseña = \"" + contrasenia + "\";");
@@ -168,7 +168,7 @@ public class DataBase {
         return connection;
     }
 
-    public void clearDataBase(){
+    public static void clearDataBase(){
         try (Connection connection = DriverManager.getConnection(databaseUrl)){
             executeUpdate(connection, "DELETE FROM Clientes" );
             executeUpdate(connection, "DELETE FROM Familiares" );
