@@ -94,6 +94,24 @@ public class DataBase {
         return solicitudes;
     }
 
+    public static void seleccionarPlanCliente(int nro_documento, String plan, String fechaAlta){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "UPDATE Clientes SET plan = \"" + plan + "\", fecha_alta_plan = \"" +
+                    fechaAlta + "\" WHERE nro_documento = " + nro_documento + ";");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void eliminarSolicitudDeAlta(String plan, int nro_documento){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "DELETE FROM Solicitudes_Alta WHERE tipo_plan = \"" +
+                    plan + "\" AND cliente = " + nro_documento + ";");
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static void insertarPlan(String nombre, double costo, String beneficios){
         try(Connection connection = getConnection()){
             executeUpdate(connection,
