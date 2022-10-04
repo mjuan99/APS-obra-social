@@ -10,7 +10,6 @@ public class VistaLogin extends JFrame{
     private JTextField nombreUsuariotextField;
     private JPasswordField passwordField;
     private JButton botonIniciarSesion;
-    private JButton botonRegistrar;
     private VistaPrincipal vistaPrincipal;
     private JFrame frame;
 
@@ -32,13 +31,12 @@ public class VistaLogin extends JFrame{
                     VistaPrincipalEmpleado vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
                     frame.setVisible(false);
                 } else if (DataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
-                    VistaPrincipalCliente vistaPrincipalCliente = new VistaPrincipalCliente(this);
+                    VistaPrincipalCliente vistaPrincipalCliente = new VistaPrincipalCliente(this,Integer.parseInt(nombreUsuario));
                     frame.setVisible(false);
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
             }catch (Exception e){
                 JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
                         "Error", JOptionPane.ERROR_MESSAGE);
