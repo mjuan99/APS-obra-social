@@ -10,7 +10,6 @@ public class VistaLogin extends JFrame{
     private JTextField nombreUsuariotextField;
     private JPasswordField passwordField;
     private JButton botonIniciarSesion;
-    private JButton botonRegistrar;
     private DataBase dataBase;
     private VistaPrincipal vistaPrincipal;
     private JFrame frame;
@@ -26,15 +25,13 @@ public class VistaLogin extends JFrame{
 
     private void inicializarListeners() {
         this.botonIniciarSesion.addActionListener(actionEvent -> {
-            //TODO: Crear metodo en bd para poder consultar por los usuarios existentes.
-            // luego verificar que el nombre de usuario exista, luego que coincida la contraseña
             String nombreUsuario = this.nombreUsuariotextField.getText();
             String pwUsuario = String.valueOf(this.passwordField.getPassword());
             try {
                 if (dataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
-                    System.out.println("Se logeo empleado");
+                    VistaPrincipalEmpleado vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
                 } else if (dataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
-                    System.out.println("Se logeo cliente");
+                    VistaPrincipalCliente vistaPrincipalCliente = new VistaPrincipalCliente(this);
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
                             "Error", JOptionPane.ERROR_MESSAGE);
