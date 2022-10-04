@@ -20,6 +20,7 @@ public class DataBase {
             e.printStackTrace();
         }
 
+        //TODO sacar esto cuando no se necesite
         clearDataBase();
         testInsertar();
         imprimirBaseDeDatos();
