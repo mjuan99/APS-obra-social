@@ -3,6 +3,9 @@ package vista;
 import database.DataBase;
 import javax.swing.*;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
 
 public class VistaRegistrarUsuario {
@@ -19,6 +22,8 @@ public class VistaRegistrarUsuario {
     private JRadioButton siRadioButton;
     private JRadioButton noRadioButton;
     private VistaPrincipal vistaPrincipal;
+    private JFrame frame;
+
 
     public VistaRegistrarUsuario(VistaPrincipal vistaPrincipal) {
         this.vistaPrincipal = vistaPrincipal;
@@ -28,7 +33,7 @@ public class VistaRegistrarUsuario {
     }
 
     public void mostrarVista() {
-        JFrame frame = new JFrame("Registrar Usuario");
+        this.frame = new JFrame("Registrar Usuario");
         frame.setContentPane(this.contentPane);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
@@ -36,6 +41,11 @@ public class VistaRegistrarUsuario {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                vistaPrincipal.activarBotonDeRegistrarUsuario();
+            }
+        });
     }
 
     private void inicializar() {
@@ -45,37 +55,55 @@ public class VistaRegistrarUsuario {
     public void iniciarBotonRegistrarListener() {
         //todo preguntar a la otra comision por los campos que no se piden
         botonRegistrar.addActionListener(actionEvent -> {
-            if (todosLosCamposEstanLlenos()) {
-                String nombre = this.nombreTextField.getText();
-                String apellido = this.apellidoTextField.getText();
-                //todo hay que validar que el nro_documento sea un entero?
-                int nro_documento = Integer.parseInt(this.dniTextField.getText());
-                String fecha_nac = this.fechaNacTextField.getText();
-                boolean esTitular;
-                if (this.siRadioButton.isSelected())
-                    esTitular = true;
-                else
-                    esTitular = false;
-                String cuil = this.cuilTextField.getText();
-                String contrasenia = String.valueOf(this.contraseniaTextField.getPassword());
-                String mail = this.mailTextField.getText();
+            try {
+                if (todosLosCamposEstanLlenos()) {
+                    String nombre = this.nombreTextField.getText();
+                    String apellido = this.apellidoTextField.getText();
+                    int nro_documento = Integer.parseInt(this.dniTextField.getText());
+                    String fecha_nac = this.fechaNacTextField.getText();
+                    String cuil = this.cuilTextField.getText();
+                    String contrasenia = String.valueOf(this.contraseniaTextField.getPassword());
+                    String mail = this.mailTextField.getText();
+                    boolean esTitular;
+                    if (this.siRadioButton.isSelected())
+                        esTitular = true;
+                    else
+                        esTitular = false;
 
-                DataBase.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, null, esTitular, "", mail, contrasenia);
-                vistaPrincipal.activarBotonDeRegistrarUsuario();
+                    DataBase.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, null, esTitular, null, mail, contrasenia);
+                    this.informarRegistroCorrecto();
+                } else
+                    JOptionPane.showInternalMessageDialog(null, "Debes completar todos los campos para poder registrarte",
+                            "Campos incompletos", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "El DNI debe ser un número entero",
+                        "DNI inválido", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
+    private void informarRegistroCorrecto() {
+        JOptionPane.showMessageDialog(null, "El usuario fue registrado con éxito", "Usuario registrado", JOptionPane.INFORMATION_MESSAGE);
+        this.frame.setVisible(false);
+        vistaPrincipal.activarBotonDeRegistrarUsuario();
+    }
+
     private void inicializarGrupoRadioButtons() {
         ButtonGroup radioButtonsGroup = new ButtonGroup();
+        siRadioButton.setSelected(true);
         radioButtonsGroup.add(siRadioButton);
         radioButtonsGroup.add(noRadioButton);
     }
 
+
     private boolean todosLosCamposEstanLlenos() {
-        //todo terminar esto
-        return !this.nombreTextField.equals("") &&
-                !this.contraseniaTextField.getText().equals("");
+        return  !this.nombreTextField.equals("") &&
+                !this.apellidoTextField.equals("") &&
+                !this.fechaNacTextField.equals("") &&
+                !this.dniTextField.getText().isEmpty() &&
+                !this.cuilTextField.equals("") &&
+                !this.mailTextField.equals("") &&
+                !String.valueOf(this.contraseniaTextField.getPassword()).equals("");
     }
 
 }
