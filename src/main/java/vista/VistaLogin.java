@@ -19,7 +19,7 @@ public class VistaLogin extends JFrame{
     public VistaLogin(VistaPrincipal vistaPrincipal, DataBase database) {
         this.frame = new JFrame("Login");
         this.vistaPrincipal = vistaPrincipal;
-        this.dataBase = database;
+        this.dataBase = new DataBase();
         this.mostrarVista();
         this.inicializarListeners();
     }
@@ -28,6 +28,21 @@ public class VistaLogin extends JFrame{
         this.botonIniciarSesion.addActionListener(actionEvent -> {
             //TODO: Crear metodo en bd para poder consultar por los usuarios existentes.
             // luego verificar que el nombre de usuario exista, luego que coincida la contraseña
+            String nombreUsuario = this.nombreUsuariotextField.getText();
+            String pwUsuario = String.valueOf(this.passwordField.getPassword());
+            try {
+                if (dataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
+                    System.out.println("Se logeo empleado");
+                } else if (dataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
+                    System.out.println("Se logeo cliente");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }catch (Exception e){
+                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
     }
 
