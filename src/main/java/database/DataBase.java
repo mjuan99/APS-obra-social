@@ -22,6 +22,7 @@ public class DataBase {
 
         clearDataBase();
         testInsertar();
+        imprimirBaseDeDatos();
     }
 
     private void testInsertar() {
@@ -46,8 +47,6 @@ public class DataBase {
         insertarSolicitudAlta("nefasto", 45666777, "30/09/2022");
         insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
         insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
-
-        imprimirBaseDeDatos();
     }
 
     private static void imprimirBaseDeDatos() {
@@ -138,6 +137,28 @@ public class DataBase {
                     + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
         }catch (SQLException e){
             System.out.println(e.getMessage());
+        }
+    }
+
+    public boolean loginCliente(int dni_cliente, String contrasenia){
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Clientes WHERE nro_documento = " + dni_cliente +
+                    " AND contraseña = \"" + contrasenia + "\";");
+            return rs.next();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loginEmpleado(String usuario, String contrasenia){
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Empleados WHERE usuario = \"" + usuario +
+                    "\" AND contraseña = \"" + contrasenia + "\";");
+            return rs.next();
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
