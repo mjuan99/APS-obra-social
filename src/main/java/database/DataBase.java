@@ -1,6 +1,7 @@
 package database;
 
 import database.entidades.Plan;
+import database.entidades.SolicitudAlta;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,13 +78,25 @@ public class DataBase {
     public static LinkedList<Plan> getPlanes(){
         LinkedList<Plan> planes = new LinkedList<>();
         try(Connection connection = getConnection()){
-            ResultSet rs = executeQuery(connection, "select * from planes");
+            ResultSet rs = executeQuery(connection, "SELECT * FROM planes;");
             while (rs.next())
                 planes.add(new Plan(rs.getString("nombre"), rs.getDouble("costo"), rs.getString("beneficios")));
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
         return planes;
+    }
+
+    public static LinkedList<SolicitudAlta> getSolicitudesDeAlta(){
+        LinkedList<SolicitudAlta> solicitudes = new LinkedList<>();
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Solicitudes_Alta;");
+            while(rs.next())
+                solicitudes.add(new SolicitudAlta(rs.getString("tipo_plan"), rs.getInt("cliente"), rs.getString("fecha")));
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return solicitudes;
     }
 
     public static void insertarPlan(String nombre, double costo, String beneficios){
