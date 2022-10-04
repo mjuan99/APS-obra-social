@@ -21,10 +21,10 @@ public class VistaRegistrarUsuario {
     private JRadioButton noRadioButton;
     private JTextField fechaAltaPlanTextField;
     private DataBase db;
-    private VistaLogin vistaLogin;
+    private VistaPrincipal vistaPrincipal;
 
-    public VistaRegistrarUsuario(VistaLogin vistaLogin, DataBase db) {
-        this.vistaLogin = vistaLogin;
+    public VistaRegistrarUsuario(VistaPrincipal vistaPrincipal, DataBase db) {
+        this.vistaPrincipal = vistaPrincipal;
         this.db = db;
         this.mostrarVista();
         this.inicializar();
@@ -67,7 +67,7 @@ public class VistaRegistrarUsuario {
                 String mail = this.mailTextField.getText();
 
                 this.db.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, plan, esTitular, fechaAltaPlan, mail, contrasenia);
-                vistaLogin.activarBotonDeRegistrarUsuario();
+                vistaPrincipal.activarBotonDeRegistrarUsuario();
             }
         });
     }

@@ -25,17 +25,10 @@ public class VistaLogin extends JFrame{
     }
 
     private void inicializarListeners() {
-        this.botonRegistrar.addActionListener(actionEvent -> {
-            VistaRegistrarUsuario vistaRegistrarUsuario = new VistaRegistrarUsuario(this, this.dataBase);
-            this.botonRegistrar.setEnabled(false);
-        });
         this.botonIniciarSesion.addActionListener(actionEvent -> {
             //TODO: Crear metodo en bd para poder consultar por los usuarios existentes.
             // luego verificar que el nombre de usuario exista, luego que coincida la contraseña
         });
-    }
-    public void activarBotonDeRegistrarUsuario() {
-        this.botonRegistrar.setEnabled(true);
     }
 
     private void mostrarVista() {
