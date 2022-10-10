@@ -40,16 +40,26 @@ public class VistaPrincipalEmpleado extends JFrame {
                     int fila = tablaPlanes.getSelectedRow();
                     String nombrePlan = (String) tablaPlanes.getValueAt(fila, 0);
                     int dniCliente = Integer.parseInt((String) tablaPlanes.getValueAt(fila, 1));
-                    DataBase.seleccionarPlanCliente(dniCliente, nombrePlan, getDate());
-                    DataBase.eliminarSolicitudDeAlta(nombrePlan, dniCliente);
+                    try {
+                        DataBase.seleccionarPlanCliente(dniCliente, nombrePlan, getDate());
+                        DataBase.eliminarSolicitudDeAlta(nombrePlan, dniCliente);
+                    }catch (Exception exception){
+                        informarError(exception.getMessage());
+                        return;
+                    }
                     DataBase.imprimirBaseDeDatos();
                     mostrarPlanes();
                     JOptionPane.showMessageDialog(null, "Solicitud aceptada correctamente", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(null, "Debes seleccionar una solicitud", "No seleccionaste un solicitud", JOptionPane.INFORMATION_MESSAGE);
+                    informarError("Debes seleccionar una solicitud");
                 }
             }
         });
+    }
+
+    private void informarError(String mensaje){
+        JOptionPane.showInternalMessageDialog(null, mensaje,
+                "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String getDate(){
@@ -70,16 +80,20 @@ public class VistaPrincipalEmpleado extends JFrame {
     }
 
     private void mostrarPlanes(){
-        LinkedList<SolicitudAlta> solicitudAltas = DataBase.getSolicitudesDeAlta();
-        this.model = new DefaultTableModel(){public boolean isCellEditable(int row, int column) {return false;} };
+        try{
+            LinkedList<SolicitudAlta> solicitudAltas = DataBase.getSolicitudesDeAlta();
+            this.model = new DefaultTableModel(){public boolean isCellEditable(int row, int column) {return false;} };
 
-        model.addColumn("Plan");
-        model.addColumn("DNI cliente");
-        model.addColumn("Fecha");
+            model.addColumn("Plan");
+            model.addColumn("DNI cliente");
+            model.addColumn("Fecha");
 
-        tablaPlanes.setModel(model);
-        for (SolicitudAlta solicitudAlta : solicitudAltas){
-            model.addRow(new String[]{solicitudAlta.plan, String.valueOf(solicitudAlta.dniCliente),solicitudAlta.fechaSolicitud});
+            tablaPlanes.setModel(model);
+            for (SolicitudAlta solicitudAlta : solicitudAltas){
+                model.addRow(new String[]{solicitudAlta.plan, String.valueOf(solicitudAlta.dniCliente),solicitudAlta.fechaSolicitud});
+            }
+        }catch (Exception e){
+            informarError(e.getMessage());
         }
     }
 }

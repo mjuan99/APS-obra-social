@@ -72,18 +72,30 @@ public class VistaPrincipalCliente extends JFrame {
     }
 
     private void mostrarPlanes(){
-        LinkedList<Plan> planes = DataBase.getPlanes();
-        this.model = new DefaultTableModel(){public boolean isCellEditable(int row, int column) {return false;} };
+        try {
+            LinkedList<Plan> planes = DataBase.getPlanes();
+            this.model = new DefaultTableModel() {
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
 
-        model.addColumn("Nombre");
-        model.addColumn("Costo");
-        model.addColumn("Beneficios");
+            model.addColumn("Nombre");
+            model.addColumn("Costo");
+            model.addColumn("Beneficios");
 
-        tablaPlanes.setModel(model);
-        for (Plan plan : planes){
-            model.addRow(new String[]{plan.nombre, String.valueOf(plan.costo),plan.beneficios});
+            tablaPlanes.setModel(model);
+            for (Plan plan : planes) {
+                model.addRow(new String[]{plan.nombre, String.valueOf(plan.costo), plan.beneficios});
+            }
+        }catch (Exception e){
+            informarError(e.getMessage());
         }
+    }
 
+    private void informarError(String mensaje){
+        JOptionPane.showInternalMessageDialog(null, mensaje,
+                "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }

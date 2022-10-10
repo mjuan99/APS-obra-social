@@ -1,5 +1,6 @@
 package database;
 
+import database.entidades.Cliente;
 import database.entidades.Plan;
 import database.entidades.SolicitudAlta;
 
@@ -26,27 +27,31 @@ public class DataBase {
     }
 
     public static void testInsertar() {
-        insertarPlan("nefasto", 999.99, "ninguno");
-        insertarPlan("basico", 9999.99, "un par");
-        insertarPlan("pro", 99999.99, "algunos");
-        insertarCliente("Perez", "Juan", 44555666,
-                "20445556660", "15/04/1997", null, true,
-                "29/09/2022", "jp@gmail.com", "1234");
-        insertarCliente("Garcia", "Carlos", 45666777,
-                "2045666777", "16/10/1999", "basico", false,
-                "28/09/2022", "cg@gmail.com", "2345");
-        insertarCliente("Fernandez", "Diego", 46777888,
-                "20467778880", "22/06/1995", "pro", true,
-                "27/09/2022", "df@gmail.com", "3456");
-        insertarFamiliar(44555666, 45666777, "hermano");
-        insertarEmpleado("Sanchez", "Martin", 47888999,
-                "4561234", "ms@gmail.com", "presidente", "ms4567", "4567");
-        insertarEmpleado("Alvarado", "Nicolas", 48999000,
-                "4564321", "na@gmail.com", "tecnico", "na5678", "5678");
-        insertarSolicitudAlta("pro", 44555666, "29/09/2022");
-        insertarSolicitudAlta("nefasto", 45666777, "30/09/2022");
-        insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
-        insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
+        try{
+            insertarPlan("basico", 999.99, "ninguno");
+            insertarPlan("intermedio", 9999.99, "30% desc. farmacia");
+            insertarPlan("pro", 99999.99, "60% desc. farmacia");
+            insertarCliente("Perez", "Juan", 44555666,
+                    "20445556660", "15/04/1997", null, true,
+                    "29/09/2022", "jp@gmail.com", "1234");
+            insertarCliente("Garcia", "Carlos", 45666777,
+                    "2045666777", "16/10/1999", "basico", false,
+                    "28/09/2022", "cg@gmail.com", "2345");
+            insertarCliente("Fernandez", "Diego", 46777888,
+                    "20467778880", "22/06/1995", "pro", true,
+                    "27/09/2022", "df@gmail.com", "3456");
+            insertarFamiliar(44555666, 45666777, "hermano");
+            insertarEmpleado("Sanchez", "Martin", 47888999,
+                    "4561234", "ms@gmail.com", "presidente", "ms4567", "4567");
+            insertarEmpleado("Alvarado", "Nicolas", 48999000,
+                    "4564321", "na@gmail.com", "tecnico", "na5678", "5678");
+            insertarSolicitudAlta("pro", 44555666, "29/09/2022");
+            insertarSolicitudAlta("nefasto", 45666777, "30/09/2022");
+            insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
+            insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void imprimirBaseDeDatos() {
@@ -70,59 +75,74 @@ public class DataBase {
         }
     }
 
-    public static LinkedList<Plan> getPlanes(){
+    public static LinkedList<Plan> getPlanes() throws Exception {
         LinkedList<Plan> planes = new LinkedList<>();
         try(Connection connection = getConnection()){
             ResultSet rs = executeQuery(connection, "SELECT * FROM planes;");
             while (rs.next())
                 planes.add(new Plan(rs.getString("nombre"), rs.getDouble("costo"), rs.getString("beneficios")));
+            return planes;
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
-        return planes;
     }
 
-    public static LinkedList<SolicitudAlta> getSolicitudesDeAlta(){
+    public static Cliente getCliente(int dni) throws  Exception{
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Clientes WHERE nro_documento = " + dni + ";");
+            if(rs.next())
+                return new Cliente(rs.getString("apellido"), rs.getString("nombre"),
+                        rs.getInt("nro_documento"), rs.getString("cuil"), rs.getString("fecha_nacimiento"),
+                        rs.getString("plan"), rs.getBoolean("es_titular"), rs.getString("fecha_alta_plan"),
+                        rs.getString("email"), rs.getString("contraseña"));
+            else
+                return null;
+        }catch (SQLException e){
+            throw new Exception("Error de la base de datos");
+        }
+    }
+
+    public static LinkedList<SolicitudAlta> getSolicitudesDeAlta() throws Exception {
         LinkedList<SolicitudAlta> solicitudes = new LinkedList<>();
         try(Connection connection = getConnection()){
             ResultSet rs = executeQuery(connection, "SELECT * FROM Solicitudes_Alta;");
             while(rs.next())
                 solicitudes.add(new SolicitudAlta(rs.getString("tipo_plan"), rs.getInt("cliente"), rs.getString("fecha")));
+            return solicitudes;
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
-        return solicitudes;
     }
 
-    public static void seleccionarPlanCliente(int nro_documento, String plan, String fechaAlta){
+    public static void seleccionarPlanCliente(int nro_documento, String plan, String fechaAlta) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "UPDATE Clientes SET plan = \"" + plan + "\", fecha_alta_plan = \"" +
                     fechaAlta + "\" WHERE nro_documento = " + nro_documento + ";");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void eliminarSolicitudDeAlta(String plan, int nro_documento){
+    public static void eliminarSolicitudDeAlta(String plan, int nro_documento) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "DELETE FROM Solicitudes_Alta WHERE tipo_plan = \"" +
                     plan + "\" AND cliente = " + nro_documento + ";");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarPlan(String nombre, double costo, String beneficios){
+    public static void insertarPlan(String nombre, double costo, String beneficios) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into planes values (\"" + nombre + "\", " +
                     costo + ", \"" + beneficios + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contrasenia){
+    public static void insertarCliente(String apellido, String nombre, int nro_documento, String cuil, String fecha_nacimiento, String plan, boolean esTitular, String fecha_alta_plan, String email, String contrasenia) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into clientes values (\"" + apellido + "\", \"" + nombre + "\", " +
@@ -130,55 +150,53 @@ public class DataBase {
                             "\", " + (plan == null ? "null" : "\"" + plan + "\"") + ", " + (esTitular ? 1 : 0) +
                             ", \"" + fecha_alta_plan + "\", \"" + email + "\", \"" + contrasenia + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarFamiliar(int dni_titular, int dni_familiar, String parentesco){
+    public static void insertarFamiliar(int dni_titular, int dni_familiar, String parentesco) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection,
                     "insert into familiares values (" + dni_titular + ", " + dni_familiar + ", \"" + parentesco + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contrasenia){
+    public static void insertarEmpleado(String apellido, String nombre, int nro_documento, String telefono, String email, String cargo, String usuario, String contrasenia) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into empleados values (\"" + apellido + "\", \"" + nombre +
                     "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
                     "\", \"" + cargo + "\", \"" + usuario + "\", \"" + contrasenia + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarSolicitudAlta(String plan, int dni_cliente, String fechaSolicitud){
+    public static void insertarSolicitudAlta(String plan, int dni_cliente, String fechaSolicitud) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into solicitudes_alta (tipo_plan, cliente, fecha) values" +
                     "(\"" + plan + "\", " + dni_cliente + ", \"" + fechaSolicitud + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String razon, String practica){
-        //executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
+    public static void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String razon, String practica) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values ("
                     + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String razon, String practica){
-        //executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values (41686955, \"29/09/2022\", \"porque si\", \"alguna\")");
+    public static void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String razon, String practica) throws Exception {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into solicitudes_prestaciones (cliente, fecha, razon, practica) values ("
                     + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
         }catch (SQLException e){
-            System.out.println(e.getMessage());
+            throw new Exception("Error de la base de datos");
         }
     }
 

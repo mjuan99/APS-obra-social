@@ -1,10 +1,14 @@
 package vista;
 
 import database.DataBase;
+import database.entidades.Cliente;
+
 import javax.swing.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
 
@@ -21,6 +25,9 @@ public class VistaRegistrarUsuario {
     private JTextField fechaNacTextField;
     private JRadioButton siRadioButton;
     private JRadioButton noRadioButton;
+    private JTextField dniTitularTextField;
+    private JTextField parentescoTextField;
+    private JPanel parentescoPanel;
     private VistaPrincipal vistaPrincipal;
     private JFrame frame;
 
@@ -29,7 +36,6 @@ public class VistaRegistrarUsuario {
         this.vistaPrincipal = vistaPrincipal;
         this.mostrarVista();
         this.inicializar();
-        this.iniciarBotonRegistrarListener();
     }
 
     public void mostrarVista() {
@@ -50,36 +56,76 @@ public class VistaRegistrarUsuario {
 
     private void inicializar() {
         this.inicializarGrupoRadioButtons();
+        iniciarBotonRegistrarListener();
     }
 
     public void iniciarBotonRegistrarListener() {
-        //todo preguntar a la otra comision por los campos que no se piden
-        botonRegistrar.addActionListener(actionEvent -> {
-            try {
-                if (todosLosCamposEstanLlenos()) {
-                    String nombre = this.nombreTextField.getText();
-                    String apellido = this.apellidoTextField.getText();
-                    int nro_documento = Integer.parseInt(this.dniTextField.getText());
-                    String fecha_nac = this.fechaNacTextField.getText();
-                    String cuil = this.cuilTextField.getText();
-                    String contrasenia = String.valueOf(this.contraseniaTextField.getPassword());
-                    String mail = this.mailTextField.getText();
-                    boolean esTitular;
-                    if (this.siRadioButton.isSelected())
-                        esTitular = true;
-                    else
-                        esTitular = false;
+        botonRegistrar.addActionListener(actionEvent -> registrarUsuario());
+    }
 
-                    DataBase.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, null, esTitular, null, mail, contrasenia);
-                    this.informarRegistroCorrecto();
-                } else
-                    JOptionPane.showInternalMessageDialog(null, "Debes completar todos los campos para poder registrarte",
-                            "Campos incompletos", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(null, "El DNI debe ser un número entero",
-                        "DNI inválido", JOptionPane.ERROR_MESSAGE);
+    private void registrarUsuario(){
+        try {
+            String nombre = this.nombreTextField.getText();
+            if(nombre.equals(""))
+                throw new Exception("Nombre incompleto");
+            String apellido = this.apellidoTextField.getText();
+            if(apellido.equals(""))
+                throw new Exception("Apellido incompleto");
+            int nro_documento;
+            try{
+                nro_documento = Integer.parseInt(this.dniTextField.getText());
+            }catch (NumberFormatException e){
+                throw new Exception("Numero de documento debe ser un numero");
             }
-        });
+            String fecha_nac = this.fechaNacTextField.getText();
+            if(!esFechaValida(fecha_nac))
+                throw new Exception("Formato de fecha de nacimiento invalido");
+            String cuil = this.cuilTextField.getText();
+            if(!cuil.matches("[0-9]+"))
+                throw new Exception("CUIL debe ser un numero");
+            String contrasenia = String.valueOf(this.contraseniaTextField.getPassword());
+            if(contrasenia.equals(""))
+                throw new Exception("Contraseña incompleta");
+            String mail = this.mailTextField.getText();
+            if(mail.equals(""))
+                throw new Exception("Mail incompleto");
+            if (this.siRadioButton.isSelected()) {
+                DataBase.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, null, true, null, mail, contrasenia);
+            }
+            else {
+                int dniTitular;
+                try{
+                    dniTitular = Integer.parseInt(dniTitularTextField.getText());
+                }catch (NumberFormatException e){
+                    throw new Exception("El numero de documento del titular debe ser un numero");
+                }
+                String parentesco = parentescoTextField.getText();
+                if(parentesco.equals(""))
+                    throw new Exception("Parentesco incompleto");
+                Cliente clienteTitular = DataBase.getCliente(dniTitular);
+                if(clienteTitular == null)
+                    throw new Exception("El titular indicado no existe");
+                if(!clienteTitular.esTitular)
+                    throw new Exception("El titular indicado no es titular");
+                DataBase.insertarCliente(apellido, nombre, nro_documento, cuil, fecha_nac, null, false, null, mail, contrasenia);
+                DataBase.insertarFamiliar(dniTitular, nro_documento, parentesco);
+            }
+            this.informarRegistroCorrecto();
+            DataBase.imprimirBaseDeDatos();
+        }catch (Exception e){
+            informarError(e.getMessage());
+        }
+    }
+
+    private boolean esFechaValida(String fecha) {
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        formatoFecha.setLenient(false);
+        try{
+            formatoFecha.parse(fecha.trim());
+        }catch (ParseException e){
+            return false;
+        }
+        return true;
     }
 
     private void informarRegistroCorrecto() {
@@ -88,22 +134,19 @@ public class VistaRegistrarUsuario {
         vistaPrincipal.activarBotonDeRegistrarUsuario();
     }
 
-    private void inicializarGrupoRadioButtons() {
-        ButtonGroup radioButtonsGroup = new ButtonGroup();
-        siRadioButton.setSelected(true);
-        radioButtonsGroup.add(siRadioButton);
-        radioButtonsGroup.add(noRadioButton);
+    private void informarError(String mensaje){
+        JOptionPane.showInternalMessageDialog(null, mensaje,
+                "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
-
-    private boolean todosLosCamposEstanLlenos() {
-        return  !this.nombreTextField.equals("") &&
-                !this.apellidoTextField.equals("") &&
-                !this.fechaNacTextField.equals("") &&
-                !this.dniTextField.getText().isEmpty() &&
-                !this.cuilTextField.equals("") &&
-                !this.mailTextField.equals("") &&
-                !String.valueOf(this.contraseniaTextField.getPassword()).equals("");
+    private void inicializarGrupoRadioButtons() {
+        parentescoPanel.setVisible(false);
+        ButtonGroup radioButtonsGroup = new ButtonGroup();
+        siRadioButton.setSelected(true);
+        siRadioButton.addActionListener(actionEvent -> parentescoPanel.setVisible(false));
+        noRadioButton.addActionListener(actionEvent -> parentescoPanel.setVisible(true));
+        radioButtonsGroup.add(siRadioButton);
+        radioButtonsGroup.add(noRadioButton);
     }
 
 }
