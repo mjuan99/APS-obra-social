@@ -35,7 +35,7 @@ public class DataBase {
                     "20445556660", "15/04/1997", null, true,
                     "29/09/2022", "jp@gmail.com", "1234");
             insertarCliente("Garcia", "Carlos", 45666777,
-                    "2045666777", "16/10/1999", "basico", false,
+                    "2045666777", "16/10/1999", "intermedio", false,
                     "28/09/2022", "cg@gmail.com", "2345");
             insertarCliente("Fernandez", "Diego", 46777888,
                     "20467778880", "22/06/1995", "pro", true,
@@ -46,7 +46,7 @@ public class DataBase {
             insertarEmpleado("Alvarado", "Nicolas", 48999000,
                     "4564321", "na@gmail.com", "tecnico", "na5678", "5678");
             insertarSolicitudAlta("pro", 44555666, "29/09/2022");
-            insertarSolicitudAlta("nefasto", 45666777, "30/09/2022");
+            insertarSolicitudAlta("intermedio", 45666777, "30/09/2022");
             insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
             insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
         }catch (Exception e){
