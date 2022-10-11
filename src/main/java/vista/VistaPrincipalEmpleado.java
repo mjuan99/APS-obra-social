@@ -1,6 +1,6 @@
 package vista;
 
-import database.DataBase;
+import database.*;
 import database.entidades.SolicitudAlta;
 import vista.VistaLogin;
 
