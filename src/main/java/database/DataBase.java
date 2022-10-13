@@ -187,7 +187,7 @@ public class DataBase {
         try(Connection connection = getConnection()){
             executeUpdate(connection, "insert into empleados values (\"" + apellido + "\", \"" + nombre +
                     "\", " + nro_documento + ", \"" + telefono + "\", \"" + email +
-                    "\", \"" + cargo + "\", \"" + usuario + "\", \"" + contrasenia + "\")");
+                    "\", \"" + cargo.toLowerCase() + "\", \"" + usuario + "\", \"" + contrasenia + "\")");
         }catch (SQLException e){
             throw new Exception("Error de la base de datos");
         }
