@@ -1,6 +1,8 @@
 package vista;
 
 import database.DataBase;
+import database.entidades.Empleado;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,9 +28,22 @@ public class VistaLogin extends JFrame{
             // luego verificar que el nombre de usuario exista, luego que coincida la contraseña
             String nombreUsuario = this.nombreUsuariotextField.getText();
             String pwUsuario = String.valueOf(this.passwordField.getPassword());
+
+
             try {
                 if (DataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
-                    VistaPrincipalEmpleado vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
+                    Empleado empleado = DataBase.getEmpleado(nombreUsuario);
+                    VistaPrincipalEmpleado vistaPrincipalEmpleado;
+
+                    if(empleado.cargo.equals("administrador")) {
+                        // TODO: cambiar a vista administrador
+                        System.out.println("Admin logeado");
+                        vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
+                    }
+                    else {
+                        System.out.println("Empleado logeado");
+                        vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
+                    }
                     frame.setVisible(false);
                 } else if (DataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
                     VistaPrincipalCliente vistaPrincipalCliente = new VistaPrincipalCliente(this,Integer.parseInt(nombreUsuario));

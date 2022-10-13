@@ -1,6 +1,7 @@
 package database;
 
 import database.entidades.Cliente;
+import database.entidades.Empleado;
 import database.entidades.Plan;
 import database.entidades.SolicitudAlta;
 
@@ -44,7 +45,7 @@ public class DataBase {
             insertarEmpleado("Sanchez", "Martin", 47888999,
                     "4561234", "ms@gmail.com", "presidente", "ms4567", "4567");
             insertarEmpleado("Alvarado", "Nicolas", 48999000,
-                    "4564321", "na@gmail.com", "tecnico", "na5678", "5678");
+                    "4564321", "na@gmail.com", "administrador", "na5678", "5678");
             insertarSolicitudAlta("pro", 44555666, "29/09/2022");
             insertarSolicitudAlta("intermedio", 45666777, "30/09/2022");
             insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
@@ -98,6 +99,25 @@ public class DataBase {
             else
                 return null;
         }catch (SQLException e){
+            throw new Exception("Error de la base de datos");
+        }
+    }
+
+    public static Empleado getEmpleado(String usr) throws Exception{
+        try(Connection connection = getConnection()) {
+
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Empleados WHERE usuario = \"" + usr + "\";");
+
+            if(rs.next()){
+                return new Empleado(rs.getString("apellido"), rs.getString("nombre"),
+                        rs.getInt("nro_documento"), rs.getString("telefono"), rs.getString("email"), rs.getString("cargo"),
+                        rs.getString("usuario"), rs.getString("contraseña"));
+            }
+                else
+                    return null;
+
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
             throw new Exception("Error de la base de datos");
         }
     }
