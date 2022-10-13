@@ -26,13 +26,14 @@ public class VistaPrincipalAdministrador {
 
     private void inicializarListeners(){
 
-        botonAltaEmpleado.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO: abrir form para dar de alta empleado
-            }
+        this.botonAltaEmpleado.addActionListener(actionEvent -> {
+                VistaDarDeAltaEmpleado vistaDarDeAltaEmpleado = new VistaDarDeAltaEmpleado(this);
+                this.botonAltaEmpleado.setEnabled(false);
         });
+    }
 
+    public void activarBotonDeAltaDeEmpleado() {
+        this.botonAltaEmpleado.setEnabled(true);
     }
 
     private void mostrarVista() {
