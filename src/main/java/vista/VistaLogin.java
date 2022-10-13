@@ -33,16 +33,13 @@ public class VistaLogin extends JFrame{
             try {
                 if (DataBase.loginEmpleado(nombreUsuario, pwUsuario)) {
                     Empleado empleado = DataBase.getEmpleado(nombreUsuario);
-                    VistaPrincipalEmpleado vistaPrincipalEmpleado;
+
 
                     if(empleado.cargo.equals("administrador")) {
-                        // TODO: cambiar a vista administrador
-                        System.out.println("Admin logeado");
-                        vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
+                        VistaPrincipalAdministrador vistaPrincipalEmpleado = new VistaPrincipalAdministrador(this);
                     }
                     else {
-                        System.out.println("Empleado logeado");
-                        vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
+                        VistaPrincipalEmpleado vistaPrincipalEmpleado = new VistaPrincipalEmpleado(this);
                     }
                     frame.setVisible(false);
                 } else if (DataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
