@@ -123,6 +123,7 @@ public class VistaDarDeAltaEmpleado {
 
             popupInformacion("Registro completado con éxito", "Éxito");
 
+
         }
         catch (Exception e){popupInformacion(e.getMessage(),"Error");}
 
@@ -130,6 +131,8 @@ public class VistaDarDeAltaEmpleado {
 
     private void popupInformacion(String msj, String titulo){
         JOptionPane.showInternalMessageDialog(null, msj, titulo, JOptionPane.INFORMATION_MESSAGE);
+        this.frame.setVisible(false);
+        vistaAdministrador.activarBotonDeAltaDeEmpleado();
     }
 
 }
