@@ -1,6 +1,6 @@
 package vista;
 
-import database.DataBase;
+import database.*;
 import database.entidades.Empleado;
 
 import javax.swing.*;
@@ -122,7 +122,9 @@ public class VistaDarDeAltaEmpleado {
             );
 
             popupInformacion("Registro completado con éxito", "Éxito");
-
+            DataBase.imprimirBaseDeDatos();
+            this.frame.setVisible(false);
+            vistaAdministrador.activarBotonDeAltaDeEmpleado();
 
         }
         catch (Exception e){popupInformacion(e.getMessage(),"Error");}
@@ -131,8 +133,6 @@ public class VistaDarDeAltaEmpleado {
 
     private void popupInformacion(String msj, String titulo){
         JOptionPane.showInternalMessageDialog(null, msj, titulo, JOptionPane.INFORMATION_MESSAGE);
-        this.frame.setVisible(false);
-        vistaAdministrador.activarBotonDeAltaDeEmpleado();
     }
 
 }
