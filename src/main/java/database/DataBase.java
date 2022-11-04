@@ -109,12 +109,27 @@ public class DataBase {
                     break;
             }
             ResultSet rs_familiares = executeQuery(connection, "SELECT dni_cliente_familiar FROM Familiares WHERE dni_cliente_cabecera = " + dniCliente + ";");
+            //planes de los familiares
             while (rs_familiares.next()) {
                 int dniFamiliar = rs_familiares.getInt("dni_cliente_familiar");
                 ResultSet rs_plan = executeQuery(connection, "SELECT plan FROM Clientes WHERE nro_documento = " + dniFamiliar + ";");
                 if (rs_plan.next()) {
                     String nombrePlan = rs_plan.getString("plan");
-                    ResultSet rs_precioPlan = executeQuery(connection, "SELECT costo FROM Planes WHERE nombre = " + "\""  + nombrePlan + "\";");
+                    if (nombrePlan != null) {
+                        ResultSet rs_precioPlan = executeQuery(connection, "SELECT costo FROM Planes WHERE nombre = " + "\"" + nombrePlan + "\";");
+                        if (rs_precioPlan.next()) {
+                            float costoPlan = rs_precioPlan.getFloat("costo");
+                            totalPago += costoPlan;
+                        }
+                    }
+                }
+            }
+            //plan del titular
+            ResultSet rs_titular = executeQuery(connection, "SELECT plan FROM Clientes WHERE nro_documento = " + dniCliente + ";");
+            if (rs_titular.next()) {
+                String nombrePlan = rs_titular.getString("plan");
+                if (nombrePlan != null) {
+                    ResultSet rs_precioPlan = executeQuery(connection, "SELECT costo FROM Planes WHERE nombre = " + "\"" + nombrePlan + "\";");
                     if (rs_precioPlan.next()) {
                         float costoPlan = rs_precioPlan.getFloat("costo");
                         totalPago += costoPlan;
