@@ -44,6 +44,8 @@ public class VistaLogin extends JFrame{
                     frame.setVisible(false);
                 } else if (DataBase.loginCliente(Integer.parseInt(nombreUsuario), pwUsuario)) {
                     VistaPrincipalCliente vistaPrincipalCliente = new VistaPrincipalCliente(this,Integer.parseInt(nombreUsuario));
+                    if (DataBase.esClienteTitular(Integer.parseInt(nombreUsuario)))
+                        vistaPrincipalCliente.activarBotonCuponPago();
                     frame.setVisible(false);
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",

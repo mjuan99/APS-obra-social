@@ -3,15 +3,16 @@ package vista;
 import database.DataBase;
 import database.entidades.Plan;
 
+import javax.management.openmbean.ArrayType;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class VistaPrincipalCliente extends JFrame {
@@ -19,6 +20,8 @@ public class VistaPrincipalCliente extends JFrame {
     private JPanel contentPane;
     private JTable tablaPlanes;
     private JButton botonSolicitarPlan;
+    private JButton botonGenerarCuponPago;
+    private JList listaOpcionPagos;
     private VistaLogin vistaLogin;
     private JFrame frame;
     private DefaultTableModel model;
@@ -32,6 +35,8 @@ public class VistaPrincipalCliente extends JFrame {
         tablaPlanes.setEnabled(false);
         this.mostrarVista();
 //        this.botonSolicitarPlan.setEnabled(false);
+
+        this.botonGenerarCuponPago.setEnabled(false);
         mostrarPlanes();
         inicializarListeners();
     }
@@ -50,6 +55,13 @@ public class VistaPrincipalCliente extends JFrame {
                     JOptionPane.showMessageDialog(null, "Debes seleccionar un plan",
                             "No seleccionaste un plan", JOptionPane.INFORMATION_MESSAGE);
                 }
+            }
+        });
+
+        botonGenerarCuponPago.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                VistaGenerarCuponPago vistaGenerarCuponPago = new VistaGenerarCuponPago(dniCliente);
             }
         });
     }
@@ -97,5 +109,10 @@ public class VistaPrincipalCliente extends JFrame {
         JOptionPane.showInternalMessageDialog(null, mensaje,
                 "Error", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    public void activarBotonCuponPago() {
+        this.botonGenerarCuponPago.setEnabled(true);
+    }
+
 
 }

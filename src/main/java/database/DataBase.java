@@ -88,7 +88,55 @@ public class DataBase {
         }
     }
 
-    public static Cliente getCliente(int dni) throws  Exception{
+    public static void generarCuponPago(int dniCliente, int pagoSeleccionado) throws Exception {
+        try(Connection connection = getConnection()){
+            int totalPago = 0;
+            int mesesAPagar = 0;
+            switch (pagoSeleccionado) {
+                case 0: //mensual
+                    mesesAPagar = 1;
+                    break;
+                case 1: //semestral
+                    mesesAPagar = 6;
+                    break;
+                case 2: //anual
+                    mesesAPagar = 12;
+                    break;
+            }
+            ResultSet rs_familiares = executeQuery(connection, "SELECT dni_cliente_familiar FROM Familiares WHERE dni_cliente_cabecera = " + dniCliente + ";");
+            while (rs_familiares.next()) {
+                int dniFamiliar = rs_familiares.getInt("dni_cliente_familiar");
+                ResultSet rs_plan = executeQuery(connection, "SELECT plan FROM Clientes WHERE nro_documento = " + dniFamiliar + ";");
+                if (rs_plan.next()) {
+                    String nombrePlan = rs_plan.getString("plan");
+                    ResultSet rs_precioPlan = executeQuery(connection, "SELECT costo FROM Planes WHERE nombre = " + nombrePlan + ";");
+                    if (rs_precioPlan.next()) {
+                        float costoPlan = rs_precioPlan.getFloat("costo");
+                        totalPago += costoPlan;
+                    }
+                }
+            }
+            //todo falla en la ultima query
+            //todo que habria que hacer con el cupon?
+            int valorCupon = mesesAPagar * totalPago;
+            System.out.println(valorCupon);
+        }catch (SQLException e){
+            throw new Exception("Error de la base de datos");
+        }
+    }
+
+    public static boolean esClienteTitular(int dni) throws Exception {
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT es_titular FROM Clientes WHERE nro_documento = " + dni + ";");
+            if(rs.next())
+                return rs.getBoolean("es_titular");
+        }catch (SQLException e){
+            throw new Exception("Error de la base de datos");
+        }
+        return false;
+    }
+
+    public static Cliente getCliente(int dni) throws Exception{
         try(Connection connection = getConnection()){
             ResultSet rs = executeQuery(connection, "SELECT * FROM Clientes WHERE nro_documento = " + dni + ";");
             if(rs.next())
