@@ -41,13 +41,18 @@ public class DataBase {
             insertarCliente("Fernandez", "Diego", 46777888,
                     "20467778880", "22/06/1995", "pro", true,
                     "27/09/2022", "df@gmail.com", "3456");
+            insertarCliente("Aguilar", "Andres", 41071805,
+                    "20410718058", "13/04/1998", "intermedio", false,
+                    "30/09/2022", "aa@gmail.com", "3456");
             insertarFamiliar(44555666, 45666777, "hermano");
+            insertarFamiliar(44555666, 41071805, "primo");
             insertarEmpleado("Sanchez", "Martin", 47888999,
                     "4561234", "ms@gmail.com", "presidente", "ms4567", "4567");
             insertarEmpleado("Alvarado", "Nicolas", 48999000,
                     "4564321", "na@gmail.com", "administrador", "na5678", "5678");
             insertarSolicitudAlta("pro", 44555666, "29/09/2022");
             insertarSolicitudAlta("intermedio", 45666777, "30/09/2022");
+            insertarSolicitudAlta("intermedio", 41071805, "30/09/2022");
             insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
             insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
         }catch (Exception e){
@@ -109,14 +114,13 @@ public class DataBase {
                 ResultSet rs_plan = executeQuery(connection, "SELECT plan FROM Clientes WHERE nro_documento = " + dniFamiliar + ";");
                 if (rs_plan.next()) {
                     String nombrePlan = rs_plan.getString("plan");
-                    ResultSet rs_precioPlan = executeQuery(connection, "SELECT costo FROM Planes WHERE nombre = " + nombrePlan + ";");
+                    ResultSet rs_precioPlan = executeQuery(connection, "SELECT costo FROM Planes WHERE nombre = " + "\""  + nombrePlan + "\";");
                     if (rs_precioPlan.next()) {
                         float costoPlan = rs_precioPlan.getFloat("costo");
                         totalPago += costoPlan;
                     }
                 }
             }
-            //todo falla en la ultima query
             //todo que habria que hacer con el cupon?
             int valorCupon = mesesAPagar * totalPago;
             System.out.println(valorCupon);
