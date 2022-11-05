@@ -54,6 +54,7 @@ public class VistaLogin extends JFrame{
             }catch (Exception e){
                 JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta",
                         "Error", JOptionPane.ERROR_MESSAGE);
+                System.out.println(e.getMessage());
             }
         });
 

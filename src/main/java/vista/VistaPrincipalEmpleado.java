@@ -1,71 +1,54 @@
 package vista;
 
-import database.*;
-import database.entidades.SolicitudAlta;
-import vista.VistaLogin;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
 
-public class VistaPrincipalEmpleado extends JFrame {
+import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
+
+public class VistaPrincipalEmpleado {
 
     private JPanel contentPane;
-    private JTable tablaPlanes;
-    private JButton botonSolicitarPlan;
-    private VistaLogin vistaLogin;
     private JFrame frame;
-    private DefaultTableModel model;
+    private JButton botonPlanes;
+    private JButton botonReintegro;
+    private JButton botonPrestaciones;
 
-    public VistaPrincipalEmpleado(VistaLogin vistaLogin) {
-        this.frame = new JFrame("Cliente");
+    private VistaLogin vistaLogin;
+
+    public VistaPrincipalEmpleado(VistaLogin vistaLogin){
+        this.frame = new JFrame("Empleado");
         this.vistaLogin = vistaLogin;
-        JTable tablaPlanes = new JTable();
-        tablaPlanes.setEnabled(false);
         this.mostrarVista();
-        mostrarPlanes();
         inicializarListeners();
     }
 
-    private void inicializarListeners() {
-        botonSolicitarPlan.addActionListener(new ActionListener() {
+    private void inicializarListeners(){
+        botonPrestaciones.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    int fila = tablaPlanes.getSelectedRow();
-                    String nombrePlan = (String) tablaPlanes.getValueAt(fila, 0);
-                    int dniCliente = Integer.parseInt((String) tablaPlanes.getValueAt(fila, 1));
-                    try {
-                        DataBase.seleccionarPlanCliente(dniCliente, nombrePlan, getDate());
-                        DataBase.eliminarSolicitudDeAlta(nombrePlan, dniCliente);
-                    }catch (Exception exception){
-                        informarError(exception.getMessage());
-                        return;
-                    }
-                    DataBase.imprimirBaseDeDatos();
-                    mostrarPlanes();
-                    JOptionPane.showMessageDialog(null, "Solicitud aceptada correctamente", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
-                } catch (Exception exception) {
-                    informarError("Debes seleccionar una solicitud");
-                }
+                new VistaSolicitudesPrestaciones(VistaPrincipalEmpleado.this);
+                deshabilitarInteraccion();
             }
         });
-    }
 
-    private void informarError(String mensaje){
-        JOptionPane.showInternalMessageDialog(null, mensaje,
-                "Error", JOptionPane.INFORMATION_MESSAGE);
-    }
+        botonReintegro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               new VistaSolicitudesReintegroEmpleado( VistaPrincipalEmpleado.this);
+               deshabilitarInteraccion();
+            }
+        });
 
-    private String getDate(){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDateTime now = LocalDateTime.now();
-        return dtf.format(now);
+        botonPlanes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new VistaSolicitudesPlanesEmpleado(VistaPrincipalEmpleado.this);
+                deshabilitarInteraccion();
+            }
+        });
+
     }
 
     private void mostrarVista() {
@@ -79,21 +62,12 @@ public class VistaPrincipalEmpleado extends JFrame {
         frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    private void mostrarPlanes(){
-        try{
-            LinkedList<SolicitudAlta> solicitudAltas = DataBase.getSolicitudesDeAlta();
-            this.model = new DefaultTableModel(){public boolean isCellEditable(int row, int column) {return false;} };
-
-            model.addColumn("Plan");
-            model.addColumn("DNI cliente");
-            model.addColumn("Fecha");
-
-            tablaPlanes.setModel(model);
-            for (SolicitudAlta solicitudAlta : solicitudAltas){
-                model.addRow(new String[]{solicitudAlta.plan, String.valueOf(solicitudAlta.dniCliente),solicitudAlta.fechaSolicitud});
-            }
-        }catch (Exception e){
-            informarError(e.getMessage());
-        }
+    private void deshabilitarInteraccion(){
+        frame.setEnabled(false);
     }
+    public void habilitarInteraccion(){
+        frame.setEnabled(true);
+    }
+
+
 }
