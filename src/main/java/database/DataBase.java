@@ -1,9 +1,6 @@
 package database;
 
-import database.entidades.Cliente;
-import database.entidades.Empleado;
-import database.entidades.Plan;
-import database.entidades.SolicitudAlta;
+import database.entidades.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,8 +50,10 @@ public class DataBase {
             insertarSolicitudAlta("pro", 44555666, "29/09/2022");
             insertarSolicitudAlta("intermedio", 45666777, "30/09/2022");
             insertarSolicitudAlta("intermedio", 41071805, "30/09/2022");
-            insertarSolicitudReintegro(45666777, "29/09/2022", "porque si", "practica1");
-            insertarSolicitudPrestacion(46777888, "30/09/2022", "pinto", "practica2");
+            insertarSolicitudReintegro(45666777, "29/09/2022", "Dr. Eggman", 2999.99, "ticket1.txt");
+            insertarSolicitudReintegro(45666777, "4/02/2022", "Dr. Strange", 4999.99, "ticket2.txt");
+            insertarSolicitudPrestacion(46777888, "30/09/2022", "Dr. House", "receta1.txt");
+            insertarSolicitudPrestacion(46777888, "12/3/2022", "Dr. Dre", "receta2.txt");
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -93,7 +92,35 @@ public class DataBase {
         }
     }
 
-    public static void generarCuponPago(int dniCliente, int pagoSeleccionado) throws Exception {
+    public static LinkedList<SolicitudPrestacion> getSolicitudesPrestacion() throws Exception{
+        LinkedList<SolicitudPrestacion> solicitudesPrestaciones = new LinkedList<>();
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Solicitudes_Prestaciones;");
+            while (rs.next())
+                solicitudesPrestaciones.add(new SolicitudPrestacion(rs.getInt("id_solicitud"), rs.getInt("cliente"),
+                        rs.getString("fecha"), rs.getString("doctor"), rs.getString("pathReceta"),
+                        rs.getString("estado")));
+            return solicitudesPrestaciones;
+        }catch (SQLException e){
+            throw new Exception("Error de la base de datos");
+        }
+    }
+
+    public static LinkedList<SolicitudReintegro> getSolicitudesReintegro() throws Exception{
+        LinkedList<SolicitudReintegro> solicitudesReintegros = new LinkedList<>();
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Solicitudes_Reintegro;");
+            while (rs.next())
+                solicitudesReintegros.add(new SolicitudReintegro(rs.getInt("id_solicitud"), rs.getInt("cliente"),
+                        rs.getString("fecha"), rs.getString("doctor"), rs.getDouble("monto"),
+                        rs.getString("pathTicket"), rs.getString("estado")));
+            return solicitudesReintegros;
+        }catch (SQLException e){
+            throw new Exception("Error de la base de datos");
+        }
+    }
+
+    public static int generarCuponPago(int dniCliente, int pagoSeleccionado) throws Exception {
         try(Connection connection = getConnection()){
             int totalPago = 0;
             int mesesAPagar = 0;
@@ -137,8 +164,7 @@ public class DataBase {
                 }
             }
             //todo que habria que hacer con el cupon?
-            int valorCupon = mesesAPagar * totalPago;
-            System.out.println(valorCupon);
+            return mesesAPagar * totalPago;
         }catch (SQLException e){
             throw new Exception("Error de la base de datos");
         }
@@ -269,19 +295,19 @@ public class DataBase {
         }
     }
 
-    public static void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String razon, String practica) throws Exception {
+    public static void insertarSolicitudReintegro(int dni_cliente, String fechaSolicitud, String doctor, double monto, String pathTicket) throws Exception {
         try(Connection connection = getConnection()){
-            executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, razon, practica) values ("
-                    + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
+            executeUpdate(connection, "insert into solicitudes_reintegro (cliente, fecha, doctor, monto, pathTicket, estado) values ("
+                    + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + doctor + "\", " + monto + ", \"" + pathTicket + "\", \"pendiente\")");
         }catch (SQLException e){
             throw new Exception("Error de la base de datos");
         }
     }
 
-    public static void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String razon, String practica) throws Exception {
+    public static void insertarSolicitudPrestacion(int dni_cliente, String fechaSolicitud, String doctor, String pathReceta) throws Exception {
         try(Connection connection = getConnection()){
-            executeUpdate(connection, "insert into solicitudes_prestaciones (cliente, fecha, razon, practica) values ("
-                    + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + razon + "\", \"" + practica + "\")");
+            executeUpdate(connection, "insert into solicitudes_prestaciones (cliente, fecha, doctor, pathReceta, estado) values ("
+                    + dni_cliente + ", \"" + fechaSolicitud + "\", \"" + doctor + "\", \"" + pathReceta + "\", \"pendiente\")");
         }catch (SQLException e){
             throw new Exception("Error de la base de datos");
         }

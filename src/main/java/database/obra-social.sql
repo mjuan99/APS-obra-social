@@ -50,8 +50,10 @@ CREATE TABLE Solicitudes_Reintegro(
     id_solicitud INTEGER PRIMARY KEY,
     cliente INTEGER,
     fecha DATE,
-    razon STRING,
-    practica STRING,
+    doctor STRING,
+    monto DECIMAL,
+    pathTicket STRING,
+    estado STRING,
 
     CONSTRAINT FK_SolicitudesReintegro_Cliente FOREIGN KEY (cliente) REFERENCES Clientes (nro_documento)
 );
@@ -59,8 +61,9 @@ CREATE TABLE Solicitudes_Prestaciones(
     id_solicitud INTEGER PRIMARY KEY,
     cliente INTEGER,
     fecha DATE,
-    razon STRING,
-    practica STRING,
+    doctor STRING,
+    pathReceta STRING,
+    estado STRING,
 
     CONSTRAINT FK_SolicitudesPrestaciones_Cliente FOREIGN KEY (cliente) REFERENCES Clientes (nro_documento)
 );

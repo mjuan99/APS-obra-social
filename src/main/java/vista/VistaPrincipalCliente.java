@@ -3,16 +3,13 @@ package vista;
 import database.DataBase;
 import database.entidades.Plan;
 
-import javax.management.openmbean.ArrayType;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class VistaPrincipalCliente extends JFrame {
@@ -21,6 +18,8 @@ public class VistaPrincipalCliente extends JFrame {
     private JTable tablaPlanes;
     private JButton botonSolicitarPlan;
     private JButton botonGenerarCuponPago;
+    private JButton botonSolicitarReintegro;
+    private JButton botonSolicitarPrestacion;
     private JList listaOpcionPagos;
     private VistaLogin vistaLogin;
     private JFrame frame;
@@ -64,6 +63,10 @@ public class VistaPrincipalCliente extends JFrame {
                 VistaGenerarCuponPago vistaGenerarCuponPago = new VistaGenerarCuponPago(dniCliente);
             }
         });
+
+        botonSolicitarReintegro.addActionListener(actionEvent -> new VistaSolicitarReintegro(dniCliente));
+
+        botonSolicitarPrestacion.addActionListener(actionEvent -> new VistaSolicitarPrestacion(dniCliente));
     }
 
     private String getDate(){

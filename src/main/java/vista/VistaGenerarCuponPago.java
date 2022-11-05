@@ -1,6 +1,7 @@
 package vista;
 
 import database.DataBase;
+import database.entidades.Cliente;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -14,6 +15,7 @@ public class VistaGenerarCuponPago {
     private JButton enviarVíaMailButton;
     private JFrame frame;
     private int dniCliente;
+    private int valor;
 
     public VistaGenerarCuponPago(int dniCliente) {
         this.dniCliente = dniCliente;
@@ -32,6 +34,44 @@ public class VistaGenerarCuponPago {
         inicializarPaneles();
         inicializarLista();
         inicializarBotones();
+        inicializarListeners();
+    }
+
+    private void inicializarListeners() {
+        imprimirButton.addActionListener(actionEvent -> {
+            if(valor > 0){
+                System.out.println();
+                System.out.println("---------------------");
+                System.out.println("Imprimiento Ticket...");
+                System.out.println("Monto: $" + valor);
+                System.out.println("---------------------");
+                frame.setVisible(false);
+            }
+        });
+
+        enviarVíaMailButton.addActionListener(actionEvent -> {
+            if(valor > 0){
+                try {
+                    Cliente cliente = DataBase.getCliente(dniCliente);
+                    if(cliente != null) {
+                        String email = cliente.email;
+                        System.out.println();
+                        System.out.println("---------------------");
+                        System.out.println("Enviando Ticket a " + email + "...");
+                        System.out.println("Monto: $" + valor);
+                        System.out.println("---------------------");
+                        frame.setVisible(false);
+                    }
+                } catch (Exception e) {
+                    informarError(e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void informarError(String mensaje){
+        JOptionPane.showInternalMessageDialog(null, mensaje,
+                "Error", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void inicializarPaneles() {
@@ -61,7 +101,7 @@ public class VistaGenerarCuponPago {
                 switch (opcionSeleccionadaDelDialogo) {
                     case 0: //selecciono opcion SI
                         try {
-                            DataBase.generarCuponPago(dniCliente, pagoSeleccionado);
+                            valor = DataBase.generarCuponPago(dniCliente, pagoSeleccionado);
                         } catch (Exception e) {
                             //todo acomodar excepcion
                             e.printStackTrace();
