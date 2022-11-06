@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class DataBase {
@@ -312,6 +313,79 @@ public class DataBase {
             throw new Exception("Error de la base de datos");
         }
     }
+
+    public static ArrayList<SolicitudReintegro> recuperarSolicitudesReintegroPendientes(){
+        ArrayList<SolicitudReintegro> solicitudes = new ArrayList<>();
+
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Solicitudes_Reintegro WHERE estado = \"pendiente\";");
+
+            while(rs.next()){
+                solicitudes.add(new SolicitudReintegro(rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getDouble(5),
+                        rs.getString(6),
+                        rs.getString(7)));
+            }
+
+            return solicitudes;
+
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<SolicitudPrestacion> recuperarSolicitudesPrestacionesPendientes(){
+        ArrayList<SolicitudPrestacion> solicitudes = new ArrayList<>();
+
+        try(Connection connection = getConnection()){
+            ResultSet rs = executeQuery(connection, "SELECT * FROM Solicitudes_Prestaciones WHERE estado = \"pendiente\";");
+
+            while(rs.next()){
+                solicitudes.add(new SolicitudPrestacion(rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6)));
+            }
+
+            return solicitudes;
+
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static void modificarEstadoSolicitudDeReintegro(int id, String nuevoEstado){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "UPDATE Solicitudes_Reintegro SET estado = \""+nuevoEstado+"\" WHERE id_solicitud = " + String.valueOf(id) + ";");
+
+            System.out.println("UDPATE REINTEGRO");
+            printResultSet(executeQuery(connection, "SELECT * FROM Solicitudes_Reintegro;"));
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void modificarEstadoSolicitudDePrestaciones(int id, String nuevoEstado){
+        try(Connection connection = getConnection()){
+            executeUpdate(connection, "UPDATE Solicitudes_Prestaciones SET estado = \""+nuevoEstado+"\" WHERE id_solicitud = " + String.valueOf(id) + ";");
+
+            System.out.println("UDPATE PRESTACIONES");
+            printResultSet(executeQuery(connection, "SELECT * FROM Solicitudes_Prestaciones;"));
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+
 
     public static boolean loginCliente(int dni_cliente, String contrasenia){
         try(Connection connection = getConnection()){
